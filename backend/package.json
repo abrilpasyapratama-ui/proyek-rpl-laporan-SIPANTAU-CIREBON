@@ -1,0 +1,57 @@
+{
+  "name": "backend",
+  "version": "1.0.0",
+  "description": "Backend API untuk Sistem Pelaporan Fasilitas",
+  "main": "src/index.js",
+  "scripts": {
+    "dev": "nodemon --exec ts-node src/index.ts",
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "prisma:generate": "prisma generate",
+    "prisma:migrate": "prisma migrate dev",
+    "prisma:seed": "prisma db seed",
+    "seed": "ts-node prisma/seed.ts",
+    "provision:admin": "ts-node scripts/provision-admin.ts",
+    "reset:admin": "ts-node scripts/reset-admin-accounts.ts",
+    "telegram:test": "ts-node scripts/telegram-test.ts",
+    "telegram:webhook": "ts-node scripts/telegram-set-webhook.ts",
+    "phone:backfill": "ts-node scripts/backfill-phone.ts",
+    "invite:admin": "ts-node scripts/invite-admin.ts"
+  },
+  "prisma": {
+    "seed": "ts-node prisma/seed.ts"
+  },
+  "dependencies": {
+    "@prisma/client": "^5.17.0",
+    "@types/multer": "^2.3.0",
+    "@types/nodemailer": "^8.0.2",
+    "bcryptjs": "^2.4.3",
+    "cookie-parser": "^1.4.6",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "express-rate-limit": "^8.7.0",
+    "helmet": "^7.1.0",
+    "jsonwebtoken": "^9.0.2",
+    "multer": "^2.4.0",
+    "nodemailer": "^10.0.13",
+    "zod": "^4.6.5"
+  },
+  "devDependencies": {
+    "@types/bcryptjs": "^2.4.6",
+    "@types/cookie-parser": "^1.4.7",
+    "@types/cors": "^2.8.17",
+    "@types/express": "^4.17.21",
+    "@types/jsonwebtoken": "^9.0.6",
+    "@types/node": "^22.0.0",
+    "@types/supertest": "^7.2.1",
+    "nodemon": "^3.1.4",
+    "prisma": "^5.17.0",
+    "supertest": "^7.3.0",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.5.3",
+    "vitest": "^5.0.3"
+  }
+}

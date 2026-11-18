@@ -1,0 +1,329 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  masyarakat
+  admin
+  petugas
+}
+
+enum UserStatus {
+  AKTIF
+  MENUNGGU_VERIFIKASI
+  DITOLAK
+  NONAKTIF
+}
+
+enum ReportStatus {
+  MENUNGGU_VERIFIKASI
+  DIPROSES
+  DALAM_PERBAIKAN
+  SELESAI
+  DITOLAK
+}
+
+enum TelegramConnectionStatus {
+  DISCONNECTED
+  PENDING
+  CONNECTED
+}
+
+enum NotificationType {
+  LAPORAN_DITERIMA
+  LAPORAN_DIVERIFIKASI
+  LAPORAN_DIPROSES
+  LAPORAN_DALAM_PERBAIKAN
+  LAPORAN_SELESAI
+  TUGAS_BARU
+  PERUBAHAN_PRIORITAS
+  SISTEM
+}
+
+model users {
+  id                  String     @id @default(uuid())
+  nama                String
+  username            String?    @unique
+  email               String     @unique
+  password            String
+  role                Role       @default(masyarakat)
+  status              UserStatus @default(AKTIF)
+  must_change_password Boolean   @default(false)
+  no_hp               String?
+  no_hp_normalized    String?    @unique
+  nip                 String?
+  instansi            String?
+  wilayah             String?
+  created_at          DateTime   @default(now())
+
+  // Integrasi Telegram personal. Chat ID hanya diisi setelah verifikasi kode.
+  telegram_chat_id      String?                  @unique
+  telegram_connected_at DateTime?
+  telegram_status       TelegramConnectionStatus @default(DISCONNECTED)
+
+  reports             reports[]
+  assignments         assignments[]
+  report_updates      report_updates[]
+  notifications       notifications[]
+  conversations       conversations[]
+  chat_analytics      chat_analytics[]
+  whatsapp_preferences user_whatsapp_preferences?
+  telegram_link_codes  telegram_link_codes[]
+  telegram_message_logs telegram_message_logs[]
+}
+
+/// Kode penghubung Telegram. Hanya hash kode yang disimpan; kode asli
+/// ditampilkan sekali ke pengguna dan tidak pernah dicatat di log.
+model telegram_link_codes {
+  id         String    @id @default(uuid())
+  user_id    String
+  code_hash  String    @unique
+  expires_at DateTime
+  used_at    DateTime?
+  attempts   Int       @default(0)
+  created_at DateTime  @default(now())
+
+  user users @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  @@index([user_id, used_at])
+  @@index([expires_at])
+}
+
+/// Log pengiriman Telegram untuk audit & deduplikasi persisten.
+model telegram_message_logs {
+  id             String    @id @default(uuid())
+  event_key      String    @unique
+  user_id        String?
+  report_id      String?
+  chat_id_masked String
+  message_id     Int?
+  status         String    @default("pending") // pending, sent, failed
+  error          String?
+  created_at     DateTime  @default(now())
+  sent_at        DateTime?
+
+  user users? @relation(fields: [user_id], references: [id], onDelete: SetNull)
+
+  @@index([user_id, created_at])
+  @@index([report_id, created_at])
+  @@index([status])
+}
+
+model reports {
+  id          String       @id @default(uuid())
+  user_id     String
+  judul       String
+  deskripsi   String       @db.Text
+  kategori    String
+  lokasi      String
+  latitude    Float?
+  longitude   Float?
+  foto        String?
+  status      ReportStatus @default(MENUNGGU_VERIFIKASI)
+  ai_kategori String?
+  ai_confidence Float?
+  ai_priority String?
+  created_at  DateTime     @default(now())
+
+  user        users        @relation(fields: [user_id], references: [id])
+  
+  assignments   assignments[]
+  updates       report_updates[]
+  notifications notifications[]
+
+  @@index([status])
+  @@index([user_id])
+  @@index([latitude, longitude])
+}
+
+model assignments {
+  id          String   @id @default(uuid())
+  report_id   String
+  petugas_id  String
+  assigned_at DateTime @default(now())
+
+  report      reports  @relation(fields: [report_id], references: [id])
+  petugas     users    @relation(fields: [petugas_id], references: [id])
+
+  @@unique([report_id, petugas_id])
+  @@index([petugas_id])
+}
+
+model report_updates {
+  id          String       @id @default(uuid())
+  report_id   String
+  petugas_id  String
+  catatan     String?      @db.Text
+  foto_bukti  String?
+  status      ReportStatus
+  created_at  DateTime     @default(now())
+
+  report      reports      @relation(fields: [report_id], references: [id])
+  petugas     users        @relation(fields: [petugas_id], references: [id])
+
+  @@index([report_id])
+}
+
+model notifications {
+  id         String           @id @default(uuid())
+  user_id    String
+  report_id  String?
+  type       NotificationType
+  judul      String
+  pesan      String           @db.Text
+  is_read    Boolean          @default(false)
+  read_at    DateTime?
+  metadata   Json?
+  created_at DateTime         @default(now())
+
+  user   users    @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  report reports? @relation(fields: [report_id], references: [id], onDelete: SetNull)
+
+  @@index([user_id, is_read])
+  @@index([user_id, created_at])
+  @@index([report_id])
+}
+
+model conversations {
+  id         String   @id @default(uuid())
+  user_id    String
+  title      String
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  user     users          @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  messages chat_messages[]
+
+  @@index([user_id, updated_at])
+}
+
+model chat_messages {
+  id              String   @id @default(uuid())
+  conversation_id String
+  role            String
+  content         String   @db.Text
+  tool_calls      Json?
+  created_at      DateTime @default(now())
+
+  conversation conversations @relation(fields: [conversation_id], references: [id], onDelete: Cascade)
+
+  @@index([conversation_id, created_at])
+}
+
+model chat_analytics {
+  id              String   @id @default(uuid())
+  user_id         String
+  conversation_id String?
+  intent          String
+  tools_used      Json?
+  response_time_ms Int
+  success         Boolean  @default(true)
+  created_at      DateTime @default(now())
+
+  user users @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  @@index([intent, created_at])
+  @@index([user_id, created_at])
+}
+
+/// Undangan peningkatan hak akses Admin untuk pemilik nomor WhatsApp.
+/// Token hanya disimpan sebagai hash; token asli diberikan di luar sistem
+/// (operator → pemilik nomor) dan tidak pernah dicatat di log/API.
+model admin_invitations {
+  id               String    @id @default(uuid())
+  phone_normalized String
+  token_hash       String
+  note             String?
+  expires_at       DateTime
+  used_at          DateTime?
+  used_by          String?
+  created_by       String?
+  created_at       DateTime  @default(now())
+
+  @@index([phone_normalized, used_at])
+  @@index([expires_at])
+}
+
+/// Preferensi notifikasi WhatsApp per pengguna.
+model user_whatsapp_preferences {
+  id                     String   @id @default(uuid())
+  user_id                String   @unique
+  whatsapp_number        String?
+  whatsapp_normalized    String?  @unique
+  is_verified            Boolean  @default(false)
+  verified_at            DateTime?
+  receive_notifications  Boolean  @default(true)
+  receive_login_alerts   Boolean  @default(false)
+  receive_report_updates Boolean  @default(true)
+  created_at             DateTime @default(now())
+  updated_at             DateTime @updatedAt
+
+  user users @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  @@index([whatsapp_normalized])
+}
+
+/// Log pengiriman pesan WhatsApp untuk audit & anti-duplikasi.
+model whatsapp_message_logs {
+  id                  String   @id @default(uuid())
+  event_type          String
+  report_id           String?
+  user_id             String?
+  recipient_number    String
+  recipient_masked    String?
+  recipient_hash      String?
+  message_template    String
+  provider            String?
+  provider_message_id String?
+  provider_process    String?
+  delivery_status     String   @default("pending") // pending, sent, failed
+  attempt_count       Int      @default(0)
+  last_error          String?
+  idempotency_key     String?  @unique
+  created_at          DateTime @default(now())
+  sent_at             DateTime?
+  delivered_at        DateTime?
+
+  @@index([event_type, created_at])
+  @@index([report_id, created_at])
+  @@index([user_id, created_at])
+  @@index([recipient_number, created_at])
+  @@index([recipient_hash, created_at])
+  @@index([idempotency_key])
+}
+
+/// Pengaturan runtime integrasi (status Fonnte, penerima admin, jenis notifikasi).
+///
+/// Token/API key TIDAK PERNAH disimpan di tabel ini — hanya dibaca dari
+/// environment server. Tabel ini hanya menyimpan pengaturan non-rahasia
+/// yang boleh diubah admin melalui halaman Integrasi.
+model integration_settings {
+  key        String   @id
+  value      String   @db.Text
+  updated_at DateTime @updatedAt
+  updated_by String?
+}
+
+/// Riwayat perubahan konfigurasi integrasi (audit).
+///
+/// `changed_fields` hanya berisi NAMA field yang berubah (tanpa nilai),
+/// sehingga API Key/token tidak pernah tersimpan di audit log.
+model integration_config_history {
+  id            String   @id @default(uuid())
+  config_type   String // whatsapp | ai
+  provider      String?
+  admin_id      String?
+  admin_email   String?
+  changed_fields String  @db.Text // JSON array nama field
+  status        String   @default("saved") // saved | test_ok | test_failed
+  note          String?
+  created_at    DateTime @default(now())
+
+  @@index([config_type, created_at])
+  @@index([created_at])
+}
