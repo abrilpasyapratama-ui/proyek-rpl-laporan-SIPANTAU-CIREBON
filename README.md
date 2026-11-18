@@ -69,17 +69,13 @@ Aplikasi SIPANTAU CIREBON dikembangkan oleh:
 
 | Item | Detail |
 |---|---|
-| Nama Lengkap | [ISI NAMA LENGKAP] |
-| NIM | [ISI NIM JIKA ADA] |
-| Kelas | [ISI KELAS JIKA ADA] |
-| Program Studi | [ISI PROGRAM STUDI] |
-| Fakultas | [ISI FAKULTAS JIKA ADA] |
-| Institusi | [ISI NAMA INSTITUSI] |
+| Nama Lengkap | [ABRIL PASYA PRATAMA] |
+| NIM | [41257080] |
+| Kelas | [1A-2025] |
+| Program Studi | [TEKNIK INFORMATIKA] |
 | Kota | Cirebon |
 | Peran dalam Proyek | [ISI PERAN: Product Owner / System Analyst / UI/UX Designer / Full Stack Developer] |
-| Email | [ISI EMAIL JIKA INGIN DITAMPILKAN] |
-| GitHub | [ISI URL PROFIL GITHUB] |
-| LinkedIn | [ISI URL LINKEDIN JIKA ADA] |
+| Email | [abrilpasyapratama@gmail.com] |
 
 > **Catatan:** Data di atas masih berupa placeholder. Silakan ubah sesuai dengan identitas pengembang yang sebenarnya. Jangan membuat alamat atau akun fiktif.
 
