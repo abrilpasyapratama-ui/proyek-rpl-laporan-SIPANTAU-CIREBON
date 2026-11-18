@@ -1,0 +1,77 @@
+name: CI/CD
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  backend:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: backend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: backend/package-lock.json
+      - run: npm ci
+      - run: npx prisma generate
+      - name: TypeScript check & build
+        run: npm run build
+      - name: Unit & API tests
+        run: npm test
+      - name: Security audit
+        run: npm audit --audit-level=high || true
+
+  frontend:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - run: npm ci
+      - name: Tests
+        run: npm test
+      - name: Lint
+        run: npm run lint || true
+      - name: Build
+        run: npm run build
+      - name: Security audit
+        run: npm audit --audit-level=high || true
+
+  docker:
+    runs-on: ubuntu-latest
+    needs: [backend, frontend]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build backend image
+        run: docker build -t laporan-fasilitas-backend ./backend
+      - name: Build frontend image
+        run: docker build -t laporan-fasilitas-frontend ./frontend
+      - name: Trivy scan (backend)
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: laporan-fasilitas-backend
+          severity: CRITICAL,HIGH
+          exit-code: '0'
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: [docker]
+    if: github.ref == 'refs/heads/main'
+    steps:
+      - name: Deploy backend to Railway
+        run: echo "Configure Railway/Vercel deploy hooks via repository secrets"
+      - name: Frontend deploys via Vercel Git integration
+        run: echo "Vercel auto-deploys on push to main"

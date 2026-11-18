@@ -15,6 +15,8 @@ Platform berbasis web yang memungkinkan masyarakat melaporkan kerusakan fasilita
 ## Daftar Isi
 
 - [Tentang Aplikasi](#tentang-aplikasi)
+- [Tentang Pengembang](#tentang-pengembang)
+- [Tujuan Pembuatan](#tujuan-pembuatan)
 - [Fitur Aplikasi](#fitur-aplikasi)
 - [Role Pengguna](#role-pengguna)
 - [Status Laporan](#status-laporan)
@@ -60,6 +62,30 @@ SIPANTAU CIREBON dirancang sebagai sistem terpusat untuk pelaporan dan pemantaua
 | **Masyarakat** | Melaporkan kerusakan, memantau status laporan, menerima notifikasi WhatsApp, dan berbicara dengan chatbot AI. |
 | **Petugas** | Menerima penugasan laporan, memperbarui progres, dan mengelola riwayat tugas. |
 | **Administrator** | Mengelola pengguna, memverifikasi laporan, mengonfigurasi integrasi WhatsApp & AI, dan memantau statistik sistem. |
+
+## Tentang Pengembang
+
+Aplikasi SIPANTAU CIREBON dikembangkan oleh:
+
+| Item | Detail |
+|---|---|
+| Nama Lengkap | [ISI NAMA LENGKAP] |
+| NIM | [ISI NIM JIKA ADA] |
+| Kelas | [ISI KELAS JIKA ADA] |
+| Program Studi | [ISI PROGRAM STUDI] |
+| Fakultas | [ISI FAKULTAS JIKA ADA] |
+| Institusi | [ISI NAMA INSTITUSI] |
+| Kota | Cirebon |
+| Peran dalam Proyek | [ISI PERAN: Product Owner / System Analyst / UI/UX Designer / Full Stack Developer] |
+| Email | [ISI EMAIL JIKA INGIN DITAMPILKAN] |
+| GitHub | [ISI URL PROFIL GITHUB] |
+| LinkedIn | [ISI URL LINKEDIN JIKA ADA] |
+
+> **Catatan:** Data di atas masih berupa placeholder. Silakan ubah sesuai dengan identitas pengembang yang sebenarnya. Jangan membuat alamat atau akun fiktif.
+
+## Tujuan Pembuatan
+
+Aplikasi SIPANTAU CIREBON dibuat untuk membantu masyarakat melaporkan kerusakan fasilitas umum serta membantu petugas dan administrator memantau, memverifikasi, dan mengelola tindak lanjut laporan dari penciptaan sampai penyelesaian.
 
 ## Fitur Aplikasi
 
@@ -677,9 +703,41 @@ Pastikan perubahan tidak merusak data produksi dan selalu sertakan ujian otomati
 
 ## Lisensi dan Kontak
 
-Lisensi proyek belum ditentukan dalam berkas repository. Gunakan placeholder lisensi sesuai kebijakan pengembang.
+### Tentang Pengembang
 
-Kontak pemilik proyek dan informasi lisensi resmi belum tersedia dalam dokumen yang ada. Silakan disesuaikan dengan identitas proyek yang sebenarnya.
+Aplikasi SIPANTAU CIREBON dikembangkan oleh:
+
+| Item | Detail |
+|---|---|
+| Nama Lengkap | [ABRIL PASYA PRATAMA] |
+| NIM | [41257080] |
+| Kelas | [1A-2025] |
+| Program Studi | [TEKNIK INFORMATIKA] |
+| Kota | Cirebon |
+| Peran dalam Proyek | [ISI PERAN: Product Owner / System Analyst / UI/UX Designer / Full Stack Developer] |
+| Email | [abrilpasyapratama@gmail.com] |
+
+> **Catatan:** Data di atas masih berupa placeholder. Silakan ubah sesuai dengan identitas pengembang yang sebenarnya. Jangan membuat alamat atau akun fiktif.
+
+### Informasi Proyek
+
+- Nama Aplikasi: SIPANTAU CIREBON
+- Kepanjangan: Sistem Informasi Pelaporan dan Pemantauan Kerusakan Fasilitas Umum
+- Deskripsi: Platform berbasis web yang memungkinkan masyarakat melaporkan kerusakan fasilitas umum, sementara petugas lapangan dan administrator dapat mengelola, memverifikasi, serta memantau tindak lanjut laporan.
+- Tujuan Pengembangan: Memberikan saluran pelaporan fasilitas umum yang mudah diakses masyarakat serta membantu petugas dan administrator memantau, memverifikasi, dan mengelola tindak lanjut laporan.
+- Tahun Pengembangan: 2026
+
+### Tujuan Pembuatan
+
+Aplikasi ini dibuat untuk membantu masyarakat melaporkan kerusakan fasilitas umum serta membantu petugas memantau dan mengelola tindak lanjut laporan.
+
+> **Catatan:** Jangan membuat alamat atau akun fiktif. Isi hanya data yang telah Anda berikan.
+
+### Hak Cipta
+
+Copyright © 2026 [NAMA PENGEMBANG]
+
+Lisensi proyek belum ditentukan dalam berkas repository. Dilarang mengklaim lisensi tertentu jika belum ditentukan oleh pemilik proyek.
 
 ---
 
